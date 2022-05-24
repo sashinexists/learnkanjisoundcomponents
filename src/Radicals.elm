@@ -86,4 +86,63 @@ radicals =
     , Radical '冖' "わかんむり" (Different "覆う・冠") [] Top [] Enclosures
     , Radical '丿' "の" (Different "カタカナのノ") [] None [] Enclosures
     , Radical '亅' "はねぼう" (Different "釣り針") [] None [] Enclosures
+    , Radical '言' "げん" (Different "話している") [] None [] VerbsAndLanguage
+    , Radical '食' "しょく" Same [ '飠' ] None [] VerbsAndLanguage
+    , Radical '飠' "しょくへん" (Different "食べ物") [ '食' ] Left [] VerbsAndLanguage
+    , Radical '示' "しめす" Same [ '礻' ] None [] VerbsAndLanguage
+    , Radical '礻' "しめすへん" (Different "示す") [ '示' ] Left [] VerbsAndLanguage
+    , Radical '又' "また" (Different "また・右の手") [] None [] VerbsAndLanguage
+    , Radical '立' "たつ" Same [] None [] VerbsAndLanguage
+    , Radical '止' "とめる" Same [] None [] VerbsAndLanguage
+    , Radical '工' "たくみ" (Different "働く・カタカナのエ") [] None [] VerbsAndLanguage
+    , Radical '⾒' "みる" Same [] None [] VerbsAndLanguage
+    , Radical '走' "はしる" Same [] None [] VerbsAndLanguage
+    , Radical '干' "かん" (Different "干した") [] None [] VerbsAndLanguage
+    , Radical '曰' "ひらび" (Different "言う") [] None [] VerbsAndLanguage
+    , Radical '比' "くらべる" Same [] None [] VerbsAndLanguage
+    , Radical '生' "うまれる" (Different "うまれる・住む") [] None [] VerbsAndLanguage
+    , Radical '非' "あらず" (Different "違う・反対・カタカナのヒ") [] None [] VerbsAndLanguage
+    , Radical '⾏' "ぎょうがまえ" (Different "いく") [] Enclose [] VerbsAndLanguage
+    , Radical '竹' "たけ" Same [] None [] NaturalMaterials
+    , Radical '糸' "いと" Same [ '幺' ] None [] NaturalMaterials
+    , Radical '幺' "いとへん" (Different "織物") [ '糸' ] Left [] NaturalMaterials
+    , Radical '金' "かね" Same [] None [] NaturalMaterials
+    , Radical '巾' "はば" (Different "布") [] None [] NaturalMaterials
+    , Radical '衣' "ころも" Same [ '衤' ] None [] NaturalMaterials
+    , Radical '衤' "ころもへん" (Different "衣服") [ '衣' ] Left [] NaturalMaterials
+    , Radical '麻' "あさ" Same [] None [] NaturalMaterials
+    , Radical '韋' "なめしがわ" (Different "鞣皮") [] None [] NaturalMaterials
+    , Radical '⽦' "ひき" Same [ '⺪' ] None [] NaturalMaterials
+    , Radical '⺪' "ひきへん" (Different "⽦") [ '⽦' ] Left [] NaturalMaterials
+    , Radical '一' "いち" (Different "一つ") [] None [] MathAndMeasurement
+    , Radical '二' "に" (Different "二つ") [] None [] MathAndMeasurement
+    , Radical '八' "はち" (Different "八つ") [] None [] MathAndMeasurement
+    , Radical '十' "じゅう" (Different "十つ") [] None [] MathAndMeasurement
+    , Radical '寸' "すん" Same [] None [] MathAndMeasurement
+    , Radical '大' "だい" (Different "大きい") [] None [] MathAndMeasurement
+    , Radical '小' "しょう" (Different "小さい") [] None [] MathAndMeasurement
+    , Radical '長' "ながい" Same [ '镸' ] None [] MathAndMeasurement
+    , Radical '镸' "ながいへん" (Different "長い") [ '長' ] Left [] MathAndMeasurement
+    , Radical '高' "たかい" Same [] None [] MathAndMeasurement
+    , Radical '乙' "おつ" Same [ '乚' ] None [] MathAndMeasurement
+    , Radical '乚' "おつ" (Different "乙") [ '乙' ] None [] MathAndMeasurement
+    , Radical '片' "かた" (Different "切った木") [] None [] MathAndMeasurement
+    , Radical '釆' "のごめ" (Different "分割する") [] None [] MathAndMeasurement
+    , Radical '面' "めん" (Different "面") [] None [] MathAndMeasurement
+    , Radical '方' "ほう" (Different "方向") [] None [] MathAndMeasurement
+    , Radical '西' "にし" Same [ '⾑', '⻃' ] None [] MathAndMeasurement
+    , Radical '⾑' "にしへん" (Different "西") [ '西', '⻃' ] None [] MathAndMeasurement
+    , Radical '⻃' "にしへん" (Different "西") [ '西', '⾑' ] None [] MathAndMeasurement
+    , Radical '艮' "こん" (Different "境界") [] None [] MathAndMeasurement
+    , Radical '斉' "せい" (Different "らしい") [] None [] MathAndMeasurement
+    , Radical '夂' "ふゆ がしら" (Different "冬") [] None [] MathAndMeasurement
+    , Radical '⼣' "ゆうべ" (Different "夕べ") [] None [] MathAndMeasurement
+    , Radical '米' "こめ" Same [] None [] Food
+    , Radical '禾' "のぎへん" (Different "粒") [] Left [] Food
+    , Radical '皿' "さら" Same [] None [] Food
+    , Radical '匕' "さじのひ" (Different "匙") [] Right [] Food
+    , Radical '酉' "ひよみのとり" (Different "酒") [] None [] Food
+    , Radical '麦' "むぎ" Same [] None [] Food
+    , Radical '豆' "まめ" Same [] None [] Food
+    , Radical '馬' "うま" Same [] None [] Animals
     ]
