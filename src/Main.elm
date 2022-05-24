@@ -8,6 +8,7 @@ import Element.Background as Background
 import Element.Border exposing (roundEach, rounded)
 import Element.Font as Font
 import Element.Input exposing (button)
+import Html exposing (col)
 import Json.Decode as D
 import Meaning exposing (displayMeaning)
 import Part exposing (getJapanesePartName)
@@ -33,7 +34,14 @@ type alias Model =
     , url : Url
     , radicals : List Radical
     , selected : Maybe Radical
+    , display : Display
     }
+
+
+type Display
+    = ListBySubject
+    | ListByPart
+    | NoCategories
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -44,6 +52,7 @@ init flags url key =
             , url = url
             , radicals = radicals
             , selected = Nothing
+            , display = ListBySubject
             }
     in
     ( model, Cmd.none )
@@ -164,12 +173,14 @@ view model =
             , Background.color theme.bgColor
             , Element.inFront (displaySelectedRadical model.selected)
             ]
-            (Element.column [ padding 50 ]
-                [ Element.column
+            (Element.column [ paddingEach { top = 10, bottom = 10, left = 60, right = 50 } ]
+                [ viewHeader
+                , Element.column
                     [ centerX
                     , centerY
                     , Font.center
                     , width fill
+                    , paddingEach { top = 10, bottom = 20, left = 0, right = 0 }
                     ]
                     [ viewRadicals model.radicals
                     ]
@@ -177,6 +188,42 @@ view model =
             )
         ]
     }
+
+
+viewHeader : Element Msg
+viewHeader =
+    Element.row [ centerY, Font.size 25, spaceEvenly, Font.alignRight, width fill, alignRight, height <| px <| 70 ]
+        [ viewHeaderButtons
+        , viewTitle
+        ]
+
+
+viewHeaderButtons : Element Msg
+viewHeaderButtons =
+    Element.row [ spacing 20, alpha 0 ]
+        [ viewHeaderButton "主題" DeselectRadical
+        , viewHeaderButton "部分" DeselectRadical
+        ]
+
+
+viewHeaderButton : String -> Msg -> Element Msg
+viewHeaderButton label action =
+    button
+        [ Background.color colorPalette.raisinBlackLight
+        , rounded 10
+        , padding 15
+        , Font.size 18
+        , Font.center
+        , mouseOver [ Background.color theme.contentBgColorLighter, Font.color theme.fontColorLighter ]
+        ]
+        { label = Element.text label
+        , onPress = Just action
+        }
+
+
+viewTitle : Element Msg
+viewTitle =
+    Element.text "漢字の部首学ぶ教室へようこそ！！"
 
 
 viewRadicals : List Radical -> Element Msg
