@@ -10,9 +10,10 @@ import Element.Font as Font
 import Element.Input exposing (button)
 import Json.Decode as D
 import Meaning exposing (displayMeaning)
-import Part exposing (getJapanesePartName)
+import Part exposing (Part, getJapanesePartName)
 import Radical exposing (Radical)
 import Radicals exposing (radicals)
+import Subject exposing (Subject, getJapaneseSubjectName)
 import Url exposing (..)
 
 
@@ -79,6 +80,7 @@ type Msg
     | DeselectRadical
     | UrlChanged Url
     | LinkClicked Browser.UrlRequest
+    | DisplayBy Display
     | KeyDown String
 
 
@@ -93,6 +95,9 @@ update msg model =
 
         KeyDown key ->
             handleKeyDown key model
+
+        DisplayBy option ->
+            ( { model | display = option }, Cmd.none )
 
         _ ->
             ( { model | selected = Nothing }, Cmd.none )
@@ -181,7 +186,15 @@ view model =
                     , width fill
                     , paddingEach { top = 10, bottom = 20, left = 0, right = 0 }
                     ]
-                    [ viewRadicals model.radicals
+                    [ case model.display of
+                        ListBySubject ->
+                            viewRadicalsBySubject model.radicals
+
+                        ListByPart ->
+                            viewRadicalsByPart model.radicals
+
+                        NoCategories ->
+                            viewRadicals model.radicals
                     ]
                 ]
             )
@@ -191,7 +204,7 @@ view model =
 
 viewHeader : Element Msg
 viewHeader =
-    Element.row [ centerY, Font.size 25, spaceEvenly, Font.alignRight, width fill, alignRight, height <| px <| 70 ]
+    Element.row [ centerY, Font.size 25, spaceEvenly, Font.light, Font.alignRight, width fill, alignRight, height <| px <| 70 ]
         [ viewHeaderButtons
         , viewTitle
         ]
@@ -199,9 +212,10 @@ viewHeader =
 
 viewHeaderButtons : Element Msg
 viewHeaderButtons =
-    Element.row [ spacing 20, alpha 0 ]
-        [ viewHeaderButton "主題" DeselectRadical
-        , viewHeaderButton "部分" DeselectRadical
+    Element.row [ spacing 20 ]
+        [ viewHeaderButton "主題" (DisplayBy ListBySubject)
+        , viewHeaderButton "部分" (DisplayBy ListByPart)
+        , viewHeaderButton "全部" (DisplayBy NoCategories)
         ]
 
 
@@ -232,6 +246,69 @@ viewRadicals radicals =
         , width fill
         ]
         (List.map viewRadical radicals)
+
+
+viewRadicalsBySubject : List Radical -> Element Msg
+viewRadicalsBySubject radicals =
+    Element.column []
+        (List.map
+            (viewSubjectRadicals radicals)
+            [ Subject.Nature
+            , Subject.BodyParts
+            , Subject.People
+            , Subject.Enclosures
+            , Subject.VerbsAndLanguage
+            , Subject.NaturalMaterials
+            , Subject.MathAndMeasurement
+            , Subject.Food
+            , Subject.Animals
+            , Subject.Warfare
+            , Subject.ManMadeTools
+            , Subject.Senses
+            , Subject.Supernatural
+            ]
+        )
+
+
+viewRadicalsByPart : List Radical -> Element Msg
+viewRadicalsByPart radicals =
+    Element.column []
+        (List.map
+            (viewPartRadicals radicals)
+            [ Part.Left
+            , Part.Right
+            , Part.Top
+            , Part.Bottom
+            , Part.Enclose
+            , Part.Hang
+            , Part.Wrap
+            , Part.None
+            ]
+        )
+
+
+viewSubjectRadicals : List Radical -> Subject -> Element Msg
+viewSubjectRadicals radicals subject =
+    Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
+        [ Element.el [ Font.extraLight, Font.size 50, paddingEach { top = 20, bottom = 20, right = 0, left = 10 } ] (Element.text (getJapaneseSubjectName subject))
+        , Element.wrappedRow
+            [ spacing 20
+            , width fill
+            ]
+            (List.map viewRadical (List.filter (\r -> r.subject == subject) radicals))
+        ]
+
+
+viewPartRadicals : List Radical -> Part -> Element Msg
+viewPartRadicals radicals part =
+    Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
+        [ Element.el [ Font.extraLight, Font.size 50, paddingEach { top = 20, bottom = 20, right = 0, left = 10 } ] (Element.text (getJapanesePartName part))
+        , Element.wrappedRow
+            [ spacing 20
+            , width fill
+            ]
+            (List.map viewRadical (List.filter (\r -> r.part == part) radicals))
+        ]
 
 
 viewRadical : Radical -> Element Msg
