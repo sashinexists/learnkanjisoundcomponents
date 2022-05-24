@@ -178,7 +178,7 @@ view model =
             , Element.inFront (displaySelectedRadical model.selected)
             ]
             (Element.column [ paddingEach { top = 10, bottom = 10, left = 60, right = 50 } ]
-                [ viewHeader
+                [ viewHeader model
                 , Element.column
                     [ centerX
                     , centerY
@@ -202,21 +202,49 @@ view model =
     }
 
 
-viewHeader : Element Msg
-viewHeader =
+viewHeader : Model -> Element Msg
+viewHeader model =
     Element.row [ centerY, Font.size 25, spaceEvenly, Font.light, Font.alignRight, width fill, alignRight, height <| px <| 70 ]
-        [ viewHeaderButtons
+        [ viewHeaderButtons model.display
         , viewTitle
         ]
 
 
-viewHeaderButtons : Element Msg
-viewHeaderButtons =
+viewHeaderButtons : Display -> Element Msg
+viewHeaderButtons display =
     Element.row [ spacing 20 ]
-        [ viewHeaderButton "主題" (DisplayBy ListBySubject)
-        , viewHeaderButton "部分" (DisplayBy ListByPart)
-        , viewHeaderButton "全部" (DisplayBy NoCategories)
+        [ displayHeaderButton "主題" (DisplayBy ListBySubject) display
+        , displayHeaderButton "部分" (DisplayBy ListByPart) display
+        , displayHeaderButton "全部" (DisplayBy NoCategories) display
         ]
+
+
+displayHeaderButton : String -> Msg -> Display -> Element Msg
+displayHeaderButton label action display =
+    case display of
+        ListBySubject ->
+            case action of
+                DisplayBy ListBySubject ->
+                    viewInactiveHeaderButton label
+
+                _ ->
+                    viewHeaderButton label action
+
+        ListByPart ->
+            case action of
+                DisplayBy ListByPart ->
+                    viewInactiveHeaderButton label
+
+                _ ->
+                    viewHeaderButton label action
+
+        NoCategories ->
+            case action of
+                DisplayBy NoCategories ->
+                    viewInactiveHeaderButton label
+
+                _ ->
+                    viewHeaderButton label action
 
 
 viewHeaderButton : String -> Msg -> Element Msg
@@ -232,6 +260,19 @@ viewHeaderButton label action =
         { label = Element.text label
         , onPress = Just action
         }
+
+
+viewInactiveHeaderButton : String -> Element Msg
+viewInactiveHeaderButton label =
+    Element.el
+        [ Background.color colorPalette.raisinBlackLight
+        , rounded 10
+        , padding 15
+        , Font.size 18
+        , Font.center
+        , alpha 0.75
+        ]
+        (Element.text label)
 
 
 viewTitle : Element Msg
