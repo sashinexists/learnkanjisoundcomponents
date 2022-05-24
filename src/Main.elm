@@ -196,9 +196,14 @@ viewRadical radical =
         , width <| px <| 320
         , height <| px <| 200
         , Font.size 50
+        , Font.center
         , mouseOver [ Background.color theme.contentBgColorLighter, Font.color theme.fontColorLighter ]
         ]
-        { label = text (String.fromChar radical.radical)
+        { label =
+            Element.column [ Font.center, centerX, centerY, spacing 20 ]
+                [ Element.el [ Font.center, centerX, centerY ] (text (String.fromChar radical.radical))
+                , Element.el [ Font.center, centerX, centerY, Font.size 20, alpha 0.3 ] (text radical.name)
+                ]
         , onPress = Just (SelectRadical radical)
         }
 
@@ -207,10 +212,22 @@ displaySelectedRadical : Maybe Radical -> Element Msg
 displaySelectedRadical selected =
     case selected of
         Just radical ->
-            viewSelectedRadical radical
+            viewPopup radical
 
         Nothing ->
             text ""
+
+
+viewPopup : Radical -> Element Msg
+viewPopup radical =
+    Element.column
+        [ width fill
+        , height fill
+        , alpha 0.95
+        , Background.color theme.bgColor
+        , Element.inFront (viewSelectedRadical radical)
+        ]
+        []
 
 
 viewSelectedRadical : Radical -> Element Msg
@@ -218,13 +235,10 @@ viewSelectedRadical radical =
     Element.column
         [ centerX
         , centerY
-        , Font.center
-        , rounded 10
         , width fill
         , height fill
-        , alpha 0.95
-        , padding 50
-        , Background.color theme.bgColor
+        , padding 60
+        , alpha 1
         ]
         [ Element.row
             [ width fill
