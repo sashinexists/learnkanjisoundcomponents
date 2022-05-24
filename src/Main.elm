@@ -8,7 +8,6 @@ import Element.Background as Background
 import Element.Border exposing (roundEach, rounded)
 import Element.Font as Font
 import Element.Input exposing (button)
-import Html exposing (col)
 import Json.Decode as D
 import Meaning exposing (displayMeaning)
 import Part exposing (getJapanesePartName)
@@ -45,7 +44,7 @@ type Display
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
+init _ url key =
     let
         model =
             { key = key
