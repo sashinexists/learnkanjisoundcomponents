@@ -38,3 +38,16 @@ type Part
     | Hang
     | Wrap
     | None
+
+
+all : List Part
+all =
+    [ Left
+    , Right
+    , Top
+    , Bottom
+    , Enclose
+    , Hang
+    , Wrap
+    , None
+    ]

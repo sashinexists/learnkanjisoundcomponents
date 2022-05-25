@@ -63,3 +63,21 @@ type Subject
     | ManMadeTools
     | Senses
     | Supernatural
+
+
+all : List Subject
+all =
+    [ Nature
+    , BodyParts
+    , People
+    , Enclosures
+    , VerbsAndLanguage
+    , NaturalMaterials
+    , MathAndMeasurement
+    , Food
+    , Animals
+    , Warfare
+    , ManMadeTools
+    , Senses
+    , Supernatural
+    ]

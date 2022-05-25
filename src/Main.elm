@@ -9,10 +9,12 @@ import Element.Border exposing (roundEach, rounded)
 import Element.Font as Font
 import Element.Input exposing (button)
 import Json.Decode as D
+import Markdown
 import Meaning exposing (displayMeaning)
 import Part exposing (Part, getJapanesePartName)
 import Radical exposing (Radical)
 import Radicals exposing (radicals)
+import Routes exposing (Route(..))
 import Subject exposing (Subject, getJapaneseSubjectName)
 import Url exposing (..)
 
@@ -35,7 +37,30 @@ type alias Model =
     , radicals : List Radical
     , selected : Maybe Radical
     , display : Display
+    , route : Route
     }
+
+
+getRouteFromPath : String -> Route
+getRouteFromPath path =
+    case path of
+        "/" ->
+            Home
+
+        "/about" ->
+            About
+
+        "/ついて" ->
+            About
+
+        "/support" ->
+            Support
+
+        "/ありがとう" ->
+            Support
+
+        _ ->
+            Home
 
 
 type Display
@@ -53,6 +78,7 @@ init _ url key =
             , radicals = radicals
             , selected = Nothing
             , display = ListBySubject
+            , route = Home
             }
     in
     ( model, Cmd.none )
@@ -80,6 +106,7 @@ type Msg
     | DeselectRadical
     | UrlChanged Url
     | LinkClicked Browser.UrlRequest
+    | SetRoute Route
     | DisplayBy Display
     | KeyDown String
 
@@ -88,7 +115,9 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SelectRadical radical ->
-            ( { model | selected = Just radical }, Cmd.none )
+            ( { model | selected = Just radical }
+            , Cmd.none
+            )
 
         DeselectRadical ->
             deselectRadical model
@@ -97,10 +126,26 @@ update msg model =
             handleKeyDown key model
 
         DisplayBy option ->
-            ( { model | display = option }, Cmd.none )
+            ( { model | display = option, route = Home }, Cmd.none )
 
-        _ ->
-            ( { model | selected = Nothing }, Cmd.none )
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model, Nav.load (Url.toString url) )
+
+                Browser.External href ->
+                    ( model, Nav.load href )
+
+        UrlChanged url ->
+            ( { model
+                | url = url
+                , route = getRouteFromPath url.path
+              }
+            , Cmd.none
+            )
+
+        SetRoute route ->
+            ( { model | route = route }, Cmd.none )
 
 
 handleKeyDown : String -> Model -> ( Model, Cmd Msg )
@@ -123,9 +168,15 @@ colorPalette =
     , smokeyBlack = rgb255 23 18 21
     , raisinBlack = rgb255 31 27 31
     , raisinBlackLight = rgb255 35 46 41
+    , combuGreen = rgb255 53 70 62
     , blackCoffee = rgb255 57 45 52
     , culturedWhite = rgb255 245 244 245
     , gainsboro = rgb255 227 221 224
+    , darkSienna = rgb255 61 20 37
+    , darkerSienner = rgb255 39 1 16
+    , oldMauve = rgb255 92 30 56
+    , spaceCadet = rgb255 44 40 62
+    , englishViolet = rgb255 61 56 87
     }
 
 
@@ -136,6 +187,10 @@ theme =
     , contentBgColor = colorPalette.raisinBlack
     , contentBgColorDarker = colorPalette.smokeyBlack
     , contentBgColorLighter = colorPalette.blackCoffee
+    , buttonBgColor = colorPalette.raisinBlackLight
+    , buttonBgHover = colorPalette.combuGreen
+    , buttonBgColorAlt = colorPalette.spaceCadet
+    , buttonBgHoverAlt = colorPalette.englishViolet
     , textSize = 16
     }
 
@@ -177,45 +232,96 @@ view model =
             , Background.color theme.bgColor
             , Element.inFront (displaySelectedRadical model.selected)
             ]
-            (Element.column [ paddingEach { top = 10, bottom = 10, left = 60, right = 50 } ]
-                [ viewHeader model
-                , Element.column
-                    [ centerX
-                    , centerY
-                    , Font.center
-                    , width fill
-                    , paddingEach { top = 10, bottom = 20, left = 0, right = 0 }
-                    ]
-                    [ case model.display of
-                        ListBySubject ->
-                            viewRadicalsBySubject model.radicals
+            (Element.column [ paddingEach { top = 10, bottom = 10, left = 60, right = 50 }, width fill ]
+                [ viewHeader model.display
+                , case model.route of
+                    Home ->
+                        viewHomeRoute model
 
-                        ListByPart ->
-                            viewRadicalsByPart model.radicals
+                    About ->
+                        viewAboutRoute
 
-                        NoCategories ->
-                            viewRadicals model.radicals
-                    ]
+                    Support ->
+                        viewSupportRoute
                 ]
             )
         ]
     }
 
 
-viewHeader : Model -> Element Msg
-viewHeader model =
-    Element.row [ centerY, Font.size 25, spaceEvenly, Font.light, Font.alignRight, width fill, alignRight, height <| px <| 70 ]
-        [ viewHeaderButtons model.display
-        , viewTitle
+viewHomeRoute : Model -> Element Msg
+viewHomeRoute model =
+    Element.column
+        [ centerX
+        , centerY
+        , Font.center
+        , width fill
+        , paddingEach { top = 10, bottom = 20, left = 0, right = 0 }
+        ]
+        [ case model.display of
+            ListBySubject ->
+                viewRadicalsBySubject model.radicals
+
+            ListByPart ->
+                viewRadicalsByPart model.radicals
+
+            NoCategories ->
+                viewRadicals model.radicals
         ]
 
 
-viewHeaderButtons : Display -> Element Msg
-viewHeaderButtons display =
+viewAboutRoute : Element Msg
+viewAboutRoute =
+    viewPage "ついて" "こんにちは、サシンです。\n こんアプリの作ったものですよ。"
+
+
+viewSupportRoute : Element Msg
+viewSupportRoute =
+    viewPage "ありがとうございます！！" "お問い合わせはこちらからどうぞ！"
+
+
+viewPage : String -> String -> Element Msg
+viewPage title content =
+    Element.column
+        [ paddingEach { top = 20, bottom = 20, left = 0, right = 0 }, width fill ]
+        [ Element.column
+            [ centerX
+            , centerY
+            , Font.center
+            , width fill
+            , Background.color theme.contentBgColor
+            , rounded 10
+            , padding 20
+            ]
+            [ viewTitle title
+            , paragraph [] [ text content ]
+            ]
+        ]
+
+
+viewHeader : Display -> Element Msg
+viewHeader display =
+    Element.row [ centerY, Font.size 25, spaceEvenly, Font.light, Font.alignRight, width fill, alignRight, height <| px <| 70 ]
+        [ viewFilterButtons display
+        , viewSiteTitle
+        , viewHeaderLinks
+        ]
+
+
+viewFilterButtons : Display -> Element Msg
+viewFilterButtons display =
     Element.row [ spacing 20 ]
         [ displayHeaderButton "主題" (DisplayBy ListBySubject) display
         , displayHeaderButton "部分" (DisplayBy ListByPart) display
         , displayHeaderButton "全部" (DisplayBy NoCategories) display
+        ]
+
+
+viewHeaderLinks : Element Msg
+viewHeaderLinks =
+    Element.row [ spacing 20, alpha 0 ]
+        [ viewHeaderButton "このアプリでついて" (SetRoute About) LinkButton
+        , viewHeaderButton "❤" (SetRoute Support) LinkButton
         ]
 
 
@@ -228,7 +334,7 @@ displayHeaderButton label action display =
                     viewInactiveHeaderButton label
 
                 _ ->
-                    viewHeaderButton label action
+                    viewHeaderButton label action FilterButton
 
         ListByPart ->
             case action of
@@ -236,7 +342,7 @@ displayHeaderButton label action display =
                     viewInactiveHeaderButton label
 
                 _ ->
-                    viewHeaderButton label action
+                    viewHeaderButton label action FilterButton
 
         NoCategories ->
             case action of
@@ -244,28 +350,56 @@ displayHeaderButton label action display =
                     viewInactiveHeaderButton label
 
                 _ ->
-                    viewHeaderButton label action
+                    viewHeaderButton label action FilterButton
 
 
-viewHeaderButton : String -> Msg -> Element Msg
-viewHeaderButton label action =
+type HeaderButtonType
+    = FilterButton
+    | LinkButton
+
+
+viewHeaderButton : String -> Msg -> HeaderButtonType -> Element Msg
+viewHeaderButton label action buttonType =
+    let
+        ( bg, bgHover ) =
+            case buttonType of
+                FilterButton ->
+                    ( theme.buttonBgColor, theme.buttonBgHover )
+
+                LinkButton ->
+                    ( theme.buttonBgColorAlt, theme.buttonBgHoverAlt )
+    in
     button
-        [ Background.color colorPalette.raisinBlackLight
+        [ Background.color bg
         , rounded 10
         , padding 15
         , Font.size 18
         , Font.center
-        , mouseOver [ Background.color theme.contentBgColorLighter, Font.color theme.fontColorLighter ]
+        , mouseOver [ Background.color bgHover, Font.color theme.fontColorLighter ]
         ]
         { label = Element.text label
         , onPress = Just action
         }
 
 
+viewHeaderLink : String -> String -> Element Msg
+viewHeaderLink label url =
+    Element.link
+        [ Background.color theme.buttonBgColor
+        , rounded 10
+        , padding 15
+        , Font.size 18
+        , Font.center
+        ]
+        { label = Element.text label
+        , url = url
+        }
+
+
 viewInactiveHeaderButton : String -> Element Msg
 viewInactiveHeaderButton label =
     Element.el
-        [ Background.color colorPalette.raisinBlackLight
+        [ Background.color theme.buttonBgColor
         , rounded 10
         , padding 15
         , Font.size 18
@@ -275,9 +409,14 @@ viewInactiveHeaderButton label =
         (Element.text label)
 
 
-viewTitle : Element Msg
-viewTitle =
+viewSiteTitle : Element Msg
+viewSiteTitle =
     Element.text "漢字の部首学ぶ教室へようこそ！！"
+
+
+viewTitle : String -> Element Msg
+viewTitle title =
+    Element.el [ Font.extraLight, Font.size 50, paddingEach { top = 20, bottom = 20, right = 0, left = 10 } ] (Element.text title)
 
 
 viewRadicals : List Radical -> Element Msg
@@ -294,20 +433,7 @@ viewRadicalsBySubject radicals =
     Element.column []
         (List.map
             (viewSubjectRadicals radicals)
-            [ Subject.Nature
-            , Subject.BodyParts
-            , Subject.People
-            , Subject.Enclosures
-            , Subject.VerbsAndLanguage
-            , Subject.NaturalMaterials
-            , Subject.MathAndMeasurement
-            , Subject.Food
-            , Subject.Animals
-            , Subject.Warfare
-            , Subject.ManMadeTools
-            , Subject.Senses
-            , Subject.Supernatural
-            ]
+            Subject.all
         )
 
 
@@ -316,22 +442,14 @@ viewRadicalsByPart radicals =
     Element.column []
         (List.map
             (viewPartRadicals radicals)
-            [ Part.Left
-            , Part.Right
-            , Part.Top
-            , Part.Bottom
-            , Part.Enclose
-            , Part.Hang
-            , Part.Wrap
-            , Part.None
-            ]
+            Part.all
         )
 
 
 viewSubjectRadicals : List Radical -> Subject -> Element Msg
 viewSubjectRadicals radicals subject =
     Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
-        [ Element.el [ Font.extraLight, Font.size 50, paddingEach { top = 20, bottom = 20, right = 0, left = 10 } ] (Element.text (getJapaneseSubjectName subject))
+        [ viewTitle (getJapaneseSubjectName subject)
         , Element.wrappedRow
             [ spacing 20
             , width fill
@@ -343,7 +461,7 @@ viewSubjectRadicals radicals subject =
 viewPartRadicals : List Radical -> Part -> Element Msg
 viewPartRadicals radicals part =
     Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
-        [ Element.el [ Font.extraLight, Font.size 50, paddingEach { top = 20, bottom = 20, right = 0, left = 10 } ] (Element.text (getJapanesePartName part))
+        [ viewTitle (getJapanesePartName part)
         , Element.wrappedRow
             [ spacing 20
             , width fill
