@@ -76,7 +76,7 @@ init flags url key =
             , radicals = radicals
             , selected = Nothing
             , display = ListBySubject
-            , route = Home
+            , route = getRouteFromPath url.path
             }
     in
     ( model, Cmd.none )
@@ -112,6 +112,10 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         LinkClicked urlRequest ->
+            let
+                _ =
+                    Debug.log "LinkClicked" urlRequest
+            in
             case urlRequest of
                 Browser.Internal url ->
                     ( model
@@ -230,7 +234,6 @@ view model =
             ]
             (Element.column [ paddingEach { top = 10, bottom = 10, left = 60, right = 50 }, width fill ]
                 [ viewHeader model.display
-                , Element.text (getUrlFromRoute model.route)
                 , case model.route of
                     Home ->
                         viewHomeRoute model
@@ -269,16 +272,16 @@ viewHomeRoute model =
 
 viewAboutRoute : Element Msg
 viewAboutRoute =
-    viewPage "ついて" "こんにちは、サシンです。\n こんアプリの作ったものですよ。"
+    viewPage Pages.about
 
 
 viewSupportRoute : Element Msg
 viewSupportRoute =
-    viewPage "ありがとうございます！！" "お問い合わせはこちらからどうぞ！"
+    viewPage Pages.support
 
 
-viewPage : String -> String -> Element Msg
-viewPage title content =
+viewPage : Page -> Element Msg
+viewPage page =
     Element.column
         [ paddingEach { top = 20, bottom = 20, left = 0, right = 0 }, width fill ]
         [ Element.column
@@ -290,8 +293,8 @@ viewPage title content =
             , rounded 10
             , padding 20
             ]
-            [ viewTitle title
-            , paragraph [] [ text content ]
+            [ viewTitle page.title
+            , paragraph [] [ text page.content ]
             ]
         ]
 

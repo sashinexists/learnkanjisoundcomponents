@@ -13,7 +13,7 @@ type alias Page =
 
 about : Page
 about =
-    { title = "ついて"
+    { title = "このアプリでついて"
     , content = "This is the about page"
     , route = About
     }
