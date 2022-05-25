@@ -15,7 +15,7 @@ import Pages exposing (..)
 import Part exposing (Part, getJapanesePartName)
 import Radical exposing (Radical)
 import Radicals exposing (radicals)
-import Routes exposing (Route(..))
+import Routes exposing (Route(..), getUrlFromRoute)
 import Subject exposing (Subject, getJapaneseSubjectName)
 import Url exposing (..)
 
@@ -45,9 +45,6 @@ type alias Model =
 getRouteFromPath : String -> Route
 getRouteFromPath path =
     case path of
-        "/" ->
-            Home
-
         "/about" ->
             About
 
@@ -71,7 +68,7 @@ type Display
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
-init _ url key =
+init flags url key =
     let
         model =
             { key = key
@@ -107,7 +104,6 @@ type Msg
     | DeselectRadical
     | UrlChanged Url
     | LinkClicked Browser.UrlRequest
-    | SetRoute Route
     | DisplayBy Display
     | KeyDown String
 
@@ -115,6 +111,24 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model
+                    , Nav.load (Url.toString url)
+                    )
+
+                Browser.External href ->
+                    ( model, Nav.load href )
+
+        UrlChanged url ->
+            ( { model
+                | url = url
+                , route = getRouteFromPath url.path
+              }
+            , Cmd.none
+            )
+
         SelectRadical radical ->
             ( { model | selected = Just radical }
             , Cmd.none
@@ -128,25 +142,6 @@ update msg model =
 
         DisplayBy option ->
             ( { model | display = option, route = Home }, Cmd.none )
-
-        LinkClicked urlRequest ->
-            case urlRequest of
-                Browser.Internal url ->
-                    ( model, Nav.load (Url.toString url) )
-
-                Browser.External href ->
-                    ( model, Nav.load href )
-
-        UrlChanged url ->
-            ( { model
-                | url = url
-                , route = getRouteFromPath url.path
-              }
-            , Cmd.none
-            )
-
-        SetRoute route ->
-            ( { model | route = route }, Cmd.none )
 
 
 handleKeyDown : String -> Model -> ( Model, Cmd Msg )
@@ -235,6 +230,7 @@ view model =
             ]
             (Element.column [ paddingEach { top = 10, bottom = 10, left = 60, right = 50 }, width fill ]
                 [ viewHeader model.display
+                , Element.text (getUrlFromRoute model.route)
                 , case model.route of
                     Home ->
                         viewHomeRoute model
