@@ -11,6 +11,7 @@ import Element.Input exposing (button)
 import Json.Decode as D
 import Markdown
 import Meaning exposing (displayMeaning)
+import Pages exposing (..)
 import Part exposing (Part, getJapanesePartName)
 import Radical exposing (Radical)
 import Radicals exposing (radicals)
@@ -319,10 +320,11 @@ viewFilterButtons display =
 
 viewHeaderLinks : Element Msg
 viewHeaderLinks =
-    Element.row [ spacing 20, alpha 0 ]
-        [ viewHeaderButton "このアプリでついて" (SetRoute About) LinkButton
-        , viewHeaderButton "❤" (SetRoute Support) LinkButton
-        ]
+    Element.row [ spacing 20, alpha 0.3 ]
+        (List.map
+            (\p -> viewHeaderLink p.title (Routes.getUrlFromRoute p.route))
+            pages
+        )
 
 
 displayHeaderButton : String -> Msg -> Display -> Element Msg
@@ -385,11 +387,12 @@ viewHeaderButton label action buttonType =
 viewHeaderLink : String -> String -> Element Msg
 viewHeaderLink label url =
     Element.link
-        [ Background.color theme.buttonBgColor
+        [ Background.color theme.buttonBgColorAlt
         , rounded 10
         , padding 15
         , Font.size 18
         , Font.center
+        , mouseOver [ Background.color theme.buttonBgHoverAlt, Font.color theme.fontColorLighter ]
         ]
         { label = Element.text label
         , url = url
