@@ -290,7 +290,7 @@ viewPage page =
             , padding 20
             ]
             [ viewTitle page.title
-            , Element.html (Markdown.toHtmlWith markdownOptions [ Html.Attributes.style "text-align" "left", Html.Attributes.style "max-width" "600px" ] page.content)
+            , Element.html (Markdown.toHtmlWith markdownOptions [ Html.Attributes.style "text-align" "left", Html.Attributes.style "max-width" "600px" ] page.content) |> Element.el [ width fill ]
             ]
         ]
 

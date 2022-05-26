@@ -13764,7 +13764,7 @@ var $mdgriffith$elm_ui$Element$layoutWith = F3(
 			child);
 	});
 var $mdgriffith$elm_ui$Element$Font$regular = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.textNormalWeight);
-var $author$project$Pages$supportCopy = '# About Learning Japanese\n<script src="https://donorbox.org/widget.js" paypalExpress="true"></script><iframe src="https://donorbox.org/embed/sashinexists" name="donorbox" allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="no" height="900px" width="100%" style="max-width: 500px; min-width: 250px; max-height:none!important"></iframe>\n    ';
+var $author$project$Pages$supportCopy = '# About Learning Japanese\n<iframe src="https://donorbox.org/embed/sashinexists" name="donorbox" allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="no" height="900px" width="100%" style="max-width: 500px; min-width: 250px; max-height:none!important"></iframe>\n    ';
 var $author$project$Pages$support = {content: $author$project$Pages$supportCopy, route: $author$project$Routes$Support, title: '❤'};
 var $mdgriffith$elm_ui$Element$Font$typeface = $mdgriffith$elm_ui$Internal$Model$Typeface;
 var $mdgriffith$elm_ui$Element$Font$light = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.textLight);
@@ -14460,16 +14460,22 @@ var $author$project$Main$viewPage = function (page) {
 				_List_fromArray(
 					[
 						$author$project$Main$viewTitle(page.title),
+						A2(
+						$mdgriffith$elm_ui$Element$el,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+							]),
 						$mdgriffith$elm_ui$Element$html(
-						A3(
-							$elm_explorations$markdown$Markdown$toHtmlWith,
-							$author$project$Main$markdownOptions,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'text-align', 'left'),
-									A2($elm$html$Html$Attributes$style, 'max-width', '600px')
-								]),
-							page.content))
+							A3(
+								$elm_explorations$markdown$Markdown$toHtmlWith,
+								$author$project$Main$markdownOptions,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'text-align', 'left'),
+										A2($elm$html$Html$Attributes$style, 'max-width', '600px')
+									]),
+								page.content)))
 					]))
 			]));
 };
