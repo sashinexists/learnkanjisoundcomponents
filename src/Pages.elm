@@ -29,50 +29,7 @@ support =
 supportCopy : String
 supportCopy =
     """# About Learning Japanese
-## Why I Am Learning Japanese
-You wrote about your reasons for learning in Japanese in your piece; [Learning and Language](https://sashinexists.com/letter/learning-and-language)
-
-In short those reasons are:
-
-1. To untether my thinking from the conventions of the English language
-2. To learn more about learning itself
-3. To understand more about our culture
-4. To read One Piece in Japanese (actual reason)
-
-I want to become fluent in Japanese. I want to develop a better theory of learning, understanding and memory that I can go on to apply to other things. I want to understand more about language influences and even shapes our thinking and the ideas in George Orwell’s 1984’s “Newspeak” and Ted Chiang’s short stories have any credence.
-
-I want to better get a handle on following the fun criterion and how living in a way in alignment with it I can accomplish feats most would consider difficult.
-
----
-## Finite Pieces to the Language
-When studying Japanese, Tim Ferris experienced a turning point when he put up a poster of all two thousand Joyo Kanji up on the wall. It was a monumental task, but it was a finite one; there were only so many things to do.
-
-As I can see from here, there are really only two types of things I need to learn explicitly.
-
-1. Kanji and Vocabulary: What the symbols and words mean and how they are pronounced
-2. Structure/Grammar: how they fit together to convey information
-
-There are only two thousand joyo kanji, there are many more words but they are made up of the kanji and thus easier to remember.
-
-There also seem to be finite grammar points. When learning Japanese these are divided into five levels from N5 to N1, from most common use to least.
-
-There are only so many steps to learn what they are, how they work and to then intuit them.
-
-A bonus is learning more and more about this process itself which can then be applied to other languages - and even other domains altogether.
-
----
-## The Organic Method
-The method of acquiring the language that makes the most sense to me is the Organic Method pioneered by [Cure Dolly’s Organic Japanese].
-
-Immersion is central here, but unlike the AJATT method the comprehensibility of the input is stressed to be of utmost importance.
-
-In the organic method the learner explicitly the minimum required to start to consume Japanese content (typically hiragana and katakana) and jumps right in. New Vocabulary and Kanji are learned from the material itself, with the structure of the language learned explicitly concurrently with the immersion.
-
-The workflow looks like this:
-
-1. Immerse in Japanese material, looking up words and creating flashcards from them
-2. Every day review the flashcards adding a few to your deck each day
-3. When cooking, cleaning, going on walks throughout the day listen to the audio of the already parsed material
+<script src="https://donorbox.org/widget.js" paypalExpress="true"></script><iframe src="https://donorbox.org/embed/sashinexists" name="donorbox" allowpaymentrequest="allowpaymentrequest" seamless="seamless" frameborder="0" scrolling="no" height="900px" width="100%" style="max-width: 500px; min-width: 250px; max-height:none!important"></iframe>
     """
 
 
@@ -80,7 +37,7 @@ aboutCopy : String
 aboutCopy =
     """
 
-# Kanji and functional components
+# TestKanji and functional components
 - All kanji are made up of what are called functional components
 - Basically they are made up of smaller parts - or components - and understanding what they are made up of can tell you how the Kanji is pronounced and what they mean
 - Every component has a meaning associated with it as well as a pronunciation
