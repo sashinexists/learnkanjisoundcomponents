@@ -8,6 +8,7 @@ import Element.Background as Background
 import Element.Border exposing (roundEach, rounded)
 import Element.Font as Font
 import Element.Input exposing (button)
+import Html.Attributes
 import Json.Decode as D
 import Markdown
 import Meaning exposing (displayMeaning)
@@ -15,7 +16,7 @@ import Pages exposing (..)
 import Part exposing (Part, getJapanesePartName)
 import Radical exposing (Radical)
 import Radicals exposing (radicals)
-import Routes exposing (Route(..), getUrlFromRoute)
+import Routes exposing (Route(..))
 import Subject exposing (Subject, getJapaneseSubjectName)
 import Url exposing (..)
 
@@ -68,7 +69,7 @@ type Display
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
+init _ url key =
     let
         model =
             { key = key
@@ -206,6 +207,15 @@ titleBarButtonStyles =
     ]
 
 
+markdownOptions : Markdown.Options
+markdownOptions =
+    { githubFlavored = Just { tables = True, breaks = True }
+    , defaultHighlighting = Nothing
+    , sanitize = False
+    , smartypants = True
+    }
+
+
 view : Model -> Browser.Document Msg
 view model =
     { title = "Learn the Japanese Kanji Radicals"
@@ -235,10 +245,10 @@ view model =
                         viewHomeRoute model
 
                     About ->
-                        viewAboutRoute
+                        viewPage Pages.about
 
                     Support ->
-                        viewSupportRoute
+                        viewPage Pages.support
                 ]
             )
         ]
@@ -266,16 +276,6 @@ viewHomeRoute model =
         ]
 
 
-viewAboutRoute : Element Msg
-viewAboutRoute =
-    viewPage Pages.about
-
-
-viewSupportRoute : Element Msg
-viewSupportRoute =
-    viewPage Pages.support
-
-
 viewPage : Page -> Element Msg
 viewPage page =
     Element.column
@@ -290,7 +290,7 @@ viewPage page =
             , padding 20
             ]
             [ viewTitle page.title
-            , paragraph [] [ text page.content ]
+            , Element.html (Markdown.toHtmlWith markdownOptions [ Html.Attributes.style "text-align" "left", Html.Attributes.style "max-width" "600px" ] page.content)
             ]
         ]
 
