@@ -145,4 +145,44 @@ radicals =
     , Radical '麦' "むぎ" Same [] None [] Food
     , Radical '豆' "まめ" Same [] None [] Food
     , Radical '馬' "うま" Same [] None [] Animals
+    , Radical '犬' "いぬ" Same [ '⺨' ] None [] Animals
+    , Radical '虫' "むし" Same [] None [] Animals
+    , Radical '⺨' "いぬ" (Different "犬") [ '犬' ] None [] Animals
+    , Radical '羊' "ひつじ" Same [] None [] Animals
+    , Radical '鳥' "とり" Same [] None [] Animals
+    , Radical '隹' "ふるとり" Same [] None [] Animals
+    , Radical '羽' "はね" Same [] None [] Animals
+    , Radical '牛' "うし" Same [] None [] Animals
+    , Radical '禾' "のぎ" Same [] None [] Animals
+    , Radical '魚' "うお" Same [] None [] Animals
+    , Radical '毛' "け" Same [] None [] Animals
+    , Radical '牙' "きばへん" Same [] Left [] Animals
+    , Radical '刀' "かたな" Same [ '刂' ] None [] Warfare
+    , Radical '刂' "りっとう" (Different "刀") [ '刀' ] Right [] Warfare
+    , Radical '⽁' "ぼくずくり" (Different "殴る") [ '⺙' ] Right [] Warfare
+    , Radical '⺙' "ぼくずくり" (Different "殴る") [ '⽁' ] Right [] Warfare
+    , Radical '力' "ちから" Same [ '⺙' ] None [] Warfare
+    , Radical '弓' "ゆみ" Same [] None [] Warfare
+    , Radical '矢' "や" Same [] None [] Warfare
+    , Radical '⼽' "ほこ" Same [ '矛' ] None [] Warfare
+    , Radical '矛' "ほこ" Same [ '⼽' ] None [] Warfare
+    , Radical '斤' "おの" Same [] None [] Warfare
+    , Radical '丨' "ぼう" Same [] None [] Warfare
+    , Radical '戸' "と" Same [] None [] ManMadeTools
+    , Radical '罒' "あみがしら" (Different "網目") [ '网', '⺳' ] Top [] ManMadeTools
+    , Radical '⺳' "あみがしら" (Different "網目") [ '罒', '网' ] None [] ManMadeTools
+    , Radical '网' "あみめ" Same [ '罒', '⺳' ] None [] ManMadeTools
+    , Radical '耒' "らいすき" (Different "鋤") [] Left [] ManMadeTools
+    , Radical '几' "つくえ" Same [] None [] ManMadeTools
+    , Radical '⼙' "ふし ずくり" (Different "印鑑") [] Right [] ManMadeTools
+    , Radical '車' "くるま" Same [] None [] ManMadeTools
+    , Radical '白' "しろ" Same [] None [] Senses
+    , Radical '青' "あお" Same [ '⾭' ] None [] Senses
+    , Radical '⾭' "あお" (Different "青") [ '青' ] None [] Senses
+    , Radical '音' "おと" Same [] None [] Senses
+    , Radical '辰' "しんのたつ" (Different "竜") [] None [] Supernatural
+    , Radical '竜' "りゅう" Same [ '龍' ] None [] Supernatural
+    , Radical '龍' "りゅう" (Different "竜") [ '竜' ] None [] Supernatural
+    , Radical '鬼' "おに" Same [] None [] Supernatural
+    , Radical 'ト' "ぼくのと" (Different "占い・カタカナのト") [] None [] Supernatural
     ]
