@@ -26,7 +26,7 @@ radicals =
     , Radical '山' "やま" Same [] None [] Nature
     , Radical '雨' "あめ" Same [] None [] Nature
     , Radical '⽓' "きがまえ" (Different "蒸気") [] Enclose [] Nature
-    , Radical '冫' "にすい" (Different "氷・二つの水度") [] Left [] Nature
+    , Radical '冫' "にすい" (Different "氷・二つの水敵") [] Left [] Nature
     , Radical '穴' "あな" (Different "洞窟・穴") [] None [] Nature
     , Radical '谷' "たに" Same [] None [] Nature
     , Radical '支' "しにょう" (Different "枝") [] None [] Nature
