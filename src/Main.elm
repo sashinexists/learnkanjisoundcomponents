@@ -284,13 +284,13 @@ viewPage page =
             [ centerX
             , centerY
             , Font.center
-            , width fill
+            , width <| px <| 800
             , Background.color theme.contentBgColor
             , rounded 10
             , padding 20
             ]
             [ viewTitle page.title
-            , Element.html (Markdown.toHtmlWith markdownOptions [ Html.Attributes.style "text-align" "left", Html.Attributes.style "max-width" "600px" ] page.content) |> Element.el [ width fill ]
+            , Element.el [ Font.alignLeft ] (Element.html (Markdown.toHtmlWith markdownOptions [ Html.Attributes.style "white-space" "normal", Html.Attributes.style "line-height" "30px" ] page.content))
             ]
         ]
 
