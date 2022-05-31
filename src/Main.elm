@@ -5,19 +5,18 @@ import Browser.Events exposing (onKeyDown)
 import Browser.Navigation as Nav
 import Element exposing (..)
 import Element.Background as Background
-import Element.Border exposing (roundEach, rounded)
+import Element.Border exposing (rounded)
 import Element.Font as Font
 import Element.Input exposing (button)
 import Html.Attributes
 import Json.Decode as D
 import Markdown
-import Meaning exposing (displayMeaning)
 import Pages exposing (..)
-import Part exposing (Part, getJapanesePartName)
-import Radical exposing (Radical)
-import Radicals exposing (radicals)
+import Random exposing (..)
+import Random.List exposing (..)
 import Routes exposing (Route(..))
-import Subject exposing (Subject, getJapaneseSubjectName)
+import SoundComponent exposing (SoundComponent)
+import SoundComponents exposing (soundComponents)
 import Url exposing (..)
 
 
@@ -36,8 +35,8 @@ main =
 type alias Model =
     { key : Nav.Key
     , url : Url
-    , radicals : List Radical
-    , selected : Maybe Radical
+    , soundComponents : List SoundComponent
+    , selected : List SoundComponent
     , display : Display
     , route : Route
     }
@@ -63,9 +62,59 @@ getRouteFromPath path =
 
 
 type Display
-    = ListBySubject
-    | ListByPart
+    = ListByKanaRow
     | NoCategories
+
+
+type KanaRow
+    = AIUEO
+    | KAKIKUKEKO
+    | SASHISUSESO
+    | TACHITSUTETO
+    | NANINUNENO
+    | HAHIFUHEHO
+    | MAMIMUMEMO
+    | YAYUYO
+    | RARIRURERO
+    | WAWO
+    | N
+
+
+printKanaRowInKana : KanaRow -> String
+printKanaRowInKana kanaRow =
+    case kanaRow of
+        AIUEO ->
+            "アイウエオ"
+
+        KAKIKUKEKO ->
+            "カキクケコ"
+
+        SASHISUSESO ->
+            "サシスセソ"
+
+        TACHITSUTETO ->
+            "タチツテト"
+
+        NANINUNENO ->
+            "ナニヌネノ"
+
+        HAHIFUHEHO ->
+            "ハヒフヘホ"
+
+        MAMIMUMEMO ->
+            "マミムメモ"
+
+        YAYUYO ->
+            "ヤユヨ"
+
+        RARIRURERO ->
+            "ラリルレロ"
+
+        WAWO ->
+            "ワヲ"
+
+        N ->
+            "ン"
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -74,9 +123,9 @@ init _ url key =
         model =
             { key = key
             , url = url
-            , radicals = radicals
-            , selected = Nothing
-            , display = ListBySubject
+            , soundComponents = soundComponents
+            , selected = []
+            , display = NoCategories
             , route = getRouteFromPath url.path
             }
     in
@@ -101,11 +150,12 @@ keyDownListener =
 
 
 type Msg
-    = SelectRadical Radical
-    | DeselectRadical
+    = SelectSoundComponent SoundComponent
+    | DeselectSoundComponent SoundComponent
     | UrlChanged Url
     | LinkClicked Browser.UrlRequest
     | DisplayBy Display
+    | Randomise
     | KeyDown String
 
 
@@ -130,13 +180,13 @@ update msg model =
             , Cmd.none
             )
 
-        SelectRadical radical ->
-            ( { model | selected = Just radical }
+        SelectSoundComponent soundComponent ->
+            ( { model | selected = model.selected ++ [ soundComponent ] }
             , Cmd.none
             )
 
-        DeselectRadical ->
-            deselectRadical model
+        DeselectSoundComponent soundComponent ->
+            deselectSoundComponent model soundComponent
 
         KeyDown key ->
             handleKeyDown key model
@@ -144,20 +194,27 @@ update msg model =
         DisplayBy option ->
             ( { model | display = option, route = Home }, Cmd.none )
 
+        Randomise ->
+            ( { model | soundComponents = Random.List.shuffle model.soundComponents }, Cmd.none )
+
 
 handleKeyDown : String -> Model -> ( Model, Cmd Msg )
 handleKeyDown key model =
     case key of
         "Escape" ->
-            deselectRadical model
+            ( { model | selected = [] }, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
 
 
-deselectRadical : Model -> ( Model, Cmd Msg )
-deselectRadical model =
-    ( { model | selected = Nothing }, Cmd.none )
+deselectSoundComponent : Model -> SoundComponent -> ( Model, Cmd Msg )
+deselectSoundComponent model soundComponent =
+    let
+        selection =
+            List.filter (\s -> soundComponent /= s) model.selected
+    in
+    ( { model | selected = selection }, Cmd.none )
 
 
 colorPalette =
@@ -218,7 +275,7 @@ markdownOptions =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Learn the Japanese Kanji Radicals"
+    { title = "Learn the Japanese Kanji SoundComponents"
     , body =
         [ layoutWith
             { options =
@@ -236,19 +293,15 @@ view model =
             , Font.regular
             , Font.justify
             , Background.color theme.bgColor
-            , Element.inFront (displaySelectedRadical model.selected)
             ]
             (Element.column [ paddingEach { top = 10, bottom = 10, left = 60, right = 50 }, width fill ]
                 [ viewHeader model.display
-                , case model.route of
-                    Home ->
-                        viewHomeRoute model
+                , case model.display of
+                    NoCategories ->
+                        viewSoundComponents model.selected model.soundComponents
 
-                    About ->
-                        viewPage Pages.about
-
-                    Support ->
-                        viewPage Pages.support
+                    ListByKanaRow ->
+                        viewSoundComponentsByKana model.selected model.soundComponents
                 ]
             )
         ]
@@ -265,14 +318,12 @@ viewHomeRoute model =
         , paddingEach { top = 10, bottom = 20, left = 0, right = 0 }
         ]
         [ case model.display of
-            ListBySubject ->
-                viewRadicalsBySubject model.radicals
-
-            ListByPart ->
-                viewRadicalsByPart model.radicals
-
             NoCategories ->
-                viewRadicals model.radicals
+                viewSoundComponents model.selected model.soundComponents
+
+            _ ->
+                --you need to come back to this
+                viewSoundComponents model.selected model.soundComponents
         ]
 
 
@@ -307,9 +358,9 @@ viewHeader display =
 viewFilterButtons : Display -> Element Msg
 viewFilterButtons display =
     Element.row [ spacing 20 ]
-        [ displayHeaderButton "主題" (DisplayBy ListBySubject) display
-        , displayHeaderButton "部分" (DisplayBy ListByPart) display
-        , displayHeaderButton "全部" (DisplayBy NoCategories) display
+        [ displayHeaderButton "音" (DisplayBy ListByKanaRow) display
+        , displayHeaderButton "なし" (DisplayBy NoCategories) display
+        , displayHeaderButton "混合" (DisplayBy NoCategories) display
         ]
 
 
@@ -325,25 +376,17 @@ viewHeaderLinks =
 displayHeaderButton : String -> Msg -> Display -> Element Msg
 displayHeaderButton label action display =
     case display of
-        ListBySubject ->
-            case action of
-                DisplayBy ListBySubject ->
-                    viewInactiveHeaderButton label
-
-                _ ->
-                    viewHeaderButton label action FilterButton
-
-        ListByPart ->
-            case action of
-                DisplayBy ListByPart ->
-                    viewInactiveHeaderButton label
-
-                _ ->
-                    viewHeaderButton label action FilterButton
-
         NoCategories ->
             case action of
                 DisplayBy NoCategories ->
+                    viewInactiveHeaderButton label
+
+                _ ->
+                    viewHeaderButton label action FilterButton
+
+        ListByKanaRow ->
+            case action of
+                DisplayBy ListByKanaRow ->
                     viewInactiveHeaderButton label
 
                 _ ->
@@ -409,7 +452,7 @@ viewInactiveHeaderButton label =
 
 viewSiteTitle : Element Msg
 viewSiteTitle =
-    Element.text "漢字の部首学ぶ教室へようこそ！！"
+    Element.text "漢字の音学ぶ教室へようこそ！！"
 
 
 viewTitle : String -> Element Msg
@@ -417,59 +460,35 @@ viewTitle title =
     Element.el [ Font.extraLight, Font.size 50, paddingEach { top = 20, bottom = 20, right = 0, left = 10 } ] (Element.text title)
 
 
-viewRadicals : List Radical -> Element Msg
-viewRadicals radicals =
+viewSoundComponents : List SoundComponent -> List SoundComponent -> Element Msg
+viewSoundComponents selected soundComponents =
     Element.wrappedRow
         [ spacing 20
         , width fill
         ]
-        (List.map viewRadical radicals)
+        (List.map (viewSoundComponent selected) soundComponents)
 
 
-viewRadicalsBySubject : List Radical -> Element Msg
-viewRadicalsBySubject radicals =
-    Element.column []
-        (List.map
-            (viewSubjectRadicals radicals)
-            Subject.all
-        )
-
-
-viewRadicalsByPart : List Radical -> Element Msg
-viewRadicalsByPart radicals =
-    Element.column []
-        (List.map
-            (viewPartRadicals radicals)
-            Part.all
-        )
-
-
-viewSubjectRadicals : List Radical -> Subject -> Element Msg
-viewSubjectRadicals radicals subject =
-    Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
-        [ viewTitle (getJapaneseSubjectName subject)
-        , Element.wrappedRow
-            [ spacing 20
-            , width fill
-            ]
-            (List.map viewRadical (List.filter (\r -> r.subject == subject) radicals))
+viewSoundComponentsByKana : List SoundComponent -> List SoundComponent -> Element Msg
+viewSoundComponentsByKana selected soundComponents =
+    Element.column
+        [ spacing 20
+        , width fill
         ]
+        (List.map (\kanaRow -> viewKanaRow kanaRow selected soundComponents) allKanaRows)
 
 
-viewPartRadicals : List Radical -> Part -> Element Msg
-viewPartRadicals radicals part =
-    Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
-        [ viewTitle (getJapanesePartName part)
-        , Element.wrappedRow
-            [ spacing 20
-            , width fill
-            ]
-            (List.map viewRadical (List.filter (\r -> r.part == part) radicals))
-        ]
+viewSoundComponent : List SoundComponent -> SoundComponent -> Element Msg
+viewSoundComponent selected soundComponent =
+    if List.any (\selectedComponent -> selectedComponent == soundComponent) selected then
+        viewSelectedSoundComponent soundComponent
+
+    else
+        viewUnselectedSoundComponent soundComponent
 
 
-viewRadical : Radical -> Element Msg
-viewRadical radical =
+viewUnselectedSoundComponent : SoundComponent -> Element Msg
+viewUnselectedSoundComponent soundComponent =
     button
         [ Background.color theme.contentBgColor
         , rounded 10
@@ -481,81 +500,83 @@ viewRadical radical =
         ]
         { label =
             Element.column [ Font.center, centerX, centerY, spacing 20 ]
-                [ Element.el [ Font.center, centerX, centerY ] (text (String.fromChar radical.radical))
-                , Element.el [ Font.center, centerX, centerY, Font.size 20, alpha 0.3 ] (text radical.name)
+                [ Element.el [ Font.center, centerX, centerY ] (text (String.fromChar soundComponent.component))
                 ]
-        , onPress = Just (SelectRadical radical)
+        , onPress = Just (SelectSoundComponent soundComponent)
         }
 
 
-displaySelectedRadical : Maybe Radical -> Element Msg
-displaySelectedRadical selected =
-    case selected of
-        Just radical ->
-            viewPopup radical
+viewSelectedSoundComponent : SoundComponent -> Element Msg
+viewSelectedSoundComponent soundComponent =
+    button
+        [ Background.color theme.contentBgColor
+        , rounded 10
+        , width <| px <| 320
+        , height <| px <| 200
+        , Font.size 50
+        , Font.center
+        , mouseOver [ Background.color theme.contentBgColorLighter, Font.color theme.fontColorLighter ]
+        ]
+        { label =
+            Element.column [ Font.center, centerX, centerY, spacing 20 ]
+                [ Element.el [ Font.center, centerX, centerY ] (text soundComponent.sound)
+                , Element.el [ Font.center, centerX, centerY, Font.size 20, alpha 0.3 ] (text (String.fromChar soundComponent.component))
+                ]
+        , onPress = Just (DeselectSoundComponent soundComponent)
+        }
 
-        Nothing ->
-            text ""
+
+viewKanaRow : KanaRow -> List SoundComponent -> List SoundComponent -> Element Msg
+viewKanaRow kanaRow selected soundComponents =
+    Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
+        [ viewTitle (printKanaRowInKana kanaRow)
+        , Element.wrappedRow
+            [ spacing 20
+            , width fill
+            ]
+            (List.map (viewSoundComponent selected) (List.filter (\soundComponent -> isSoundFromKanaRow kanaRow soundComponent) soundComponents))
+        ]
 
 
-viewPopup : Radical -> Element Msg
-viewPopup radical =
+allKanaRows : List KanaRow
+allKanaRows =
+    [ AIUEO
+    , KAKIKUKEKO
+    , SASHISUSESO
+    , TACHITSUTETO
+    , NANINUNENO
+    , HAHIFUHEHO
+    , MAMIMUMEMO
+    , YAYUYO
+    , RARIRURERO
+    , WAWO
+    , N
+    ]
+
+
+isSoundFromKanaRow : KanaRow -> SoundComponent -> Bool
+isSoundFromKanaRow kanaRow soundComponent =
+    let
+        startsWith =
+            String.split "" (printKanaRowInKana kanaRow)
+    in
+    List.any (\letter -> String.startsWith letter soundComponent.sound) startsWith
+
+
+viewPopup : SoundComponent -> Element Msg
+viewPopup soundComponent =
     Element.column
         [ width fill
         , height fill
         , alpha 0.95
         , Background.color theme.bgColor
-        , Element.inFront (viewSelectedRadical radical)
+        , Element.inFront (viewSelectedSoundComponent soundComponent)
         ]
         []
 
 
-viewSelectedRadical : Radical -> Element Msg
-viewSelectedRadical radical =
-    Element.column
-        [ centerX
-        , centerY
-        , width fill
-        , height fill
-        , padding 60
-        , alpha 1
-        ]
-        [ Element.row
-            [ width fill
-            , paddingEach { left = 20, top = 0, right = 0, bottom = 0 }
-            , Background.color theme.contentBgColorDarker
-            , alpha 1
-            , roundEach { topLeft = 10, topRight = 10, bottomLeft = 0, bottomRight = 0 }
-            ]
-            [ button
-                (titleBarButtonStyles ++ [ roundEach { topRight = 10, topLeft = 0, bottomLeft = 0, bottomRight = 0 } ])
-                { label = text "⨉"
-                , onPress = Just DeselectRadical
-                }
-            ]
-        , Element.row
-            [ centerX
-            , centerY
-            , height fill
-            , width fill
-            , spacing 50
-            , roundEach { topLeft = 0, topRight = 0, bottomLeft = 10, bottomRight = 10 }
-            , Background.color theme.contentBgColorDarker
-            ]
-            [ Element.el
-                [ Font.size 200, Font.extraLight, width (fillPortion 1), Font.alignRight ]
-                (text (String.fromChar radical.radical))
-            , Element.column [ width (fillPortion 1), spacing 30, Font.alignLeft ]
-                [ viewRadicalAttribute "名前" radical.name
-                , viewRadicalAttribute "意味" (displayMeaning radical.meaning)
-                , viewRadicalAttribute "部分" (getJapanesePartName radical.part)
-                ]
-            ]
-        ]
-
-
-viewRadicalAttribute : String -> String -> Element Msg
-viewRadicalAttribute attribute value =
+viewSoundComponentAttribute : String -> String -> Element Msg
+viewSoundComponentAttribute attribute value =
     Element.row
         [ centerX
         , centerY
