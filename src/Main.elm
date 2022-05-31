@@ -155,6 +155,7 @@ type Msg
     | UrlChanged Url
     | LinkClicked Browser.UrlRequest
     | DisplayBy Display
+    | NewSoundComponentsList (List SoundComponent)
     | Randomise
     | KeyDown String
 
@@ -195,7 +196,10 @@ update msg model =
             ( { model | display = option, route = Home }, Cmd.none )
 
         Randomise ->
-            ( { model | soundComponents = Random.List.shuffle model.soundComponents }, Cmd.none )
+            ( model, Random.generate NewSoundComponentsList (Random.List.shuffle model.soundComponents) )
+
+        NewSoundComponentsList soundComponents ->
+            ( { model | soundComponents = soundComponents }, Cmd.none )
 
 
 handleKeyDown : String -> Model -> ( Model, Cmd Msg )
@@ -360,7 +364,7 @@ viewFilterButtons display =
     Element.row [ spacing 20 ]
         [ displayHeaderButton "音" (DisplayBy ListByKanaRow) display
         , displayHeaderButton "なし" (DisplayBy NoCategories) display
-        , displayHeaderButton "混合" (DisplayBy NoCategories) display
+        , displayHeaderButton "混合" Randomise display
         ]
 
 
