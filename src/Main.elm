@@ -125,7 +125,7 @@ init _ url key =
             , url = url
             , soundComponents = soundComponents
             , selected = []
-            , display = NoCategories
+            , display = ListByKanaRow
             , route = getRouteFromPath url.path
             }
     in
@@ -224,7 +224,7 @@ deselectSoundComponent model soundComponent =
 colorPalette =
     { richBlack = rgb255 12 9 11
     , smokeyBlack = rgb255 23 18 21
-    , raisinBlack = rgb255 31 27 31
+    , raisinBlack = rgb255 25 25 36
     , raisinBlackLight = rgb255 35 46 41
     , combuGreen = rgb255 53 70 62
     , blackCoffee = rgb255 57 45 52
@@ -235,18 +235,24 @@ colorPalette =
     , oldMauve = rgb255 92 30 56
     , spaceCadet = rgb255 44 40 62
     , englishViolet = rgb255 61 56 87
+    , independence = rgb255 56 59 83
+    , independenceLight = rgb255 74 78 109
+    , independenceDark = rgb255 58 61 85
+    , ivory = rgb255 254 252 236
+    , middleGreen = rgb255 69 135 84
+    , forestGreenCrayola = rgb255 107 179 124
     }
 
 
 theme =
-    { fontColor = colorPalette.gainsboro
+    { fontColor = colorPalette.ivory
     , fontColorLighter = colorPalette.culturedWhite
-    , bgColor = colorPalette.richBlack
-    , contentBgColor = colorPalette.raisinBlack
-    , contentBgColorDarker = colorPalette.smokeyBlack
-    , contentBgColorLighter = colorPalette.blackCoffee
-    , buttonBgColor = colorPalette.raisinBlackLight
-    , buttonBgHover = colorPalette.combuGreen
+    , bgColor = colorPalette.raisinBlack
+    , contentBgColor = colorPalette.independence
+    , contentBgColorDarker = colorPalette.independenceDark
+    , contentBgColorLighter = colorPalette.independenceLight
+    , buttonBgColor = colorPalette.middleGreen
+    , buttonBgHover = colorPalette.forestGreenCrayola
     , buttonBgColorAlt = colorPalette.spaceCadet
     , buttonBgHoverAlt = colorPalette.englishViolet
     , textSize = 16
@@ -370,7 +376,7 @@ viewFilterButtons display =
 
 viewHeaderLinks : Element Msg
 viewHeaderLinks =
-    Element.row [ spacing 20, alpha 0.3 ]
+    Element.row [ spacing 20, alpha 0 ]
         (List.map
             (\p -> viewHeaderLink p.title (Routes.getUrlFromRoute p.route))
             pages
@@ -522,9 +528,9 @@ viewSelectedSoundComponent soundComponent =
         , mouseOver [ Background.color theme.contentBgColorLighter, Font.color theme.fontColorLighter ]
         ]
         { label =
-            Element.column [ Font.center, centerX, centerY, spacing 20 ]
+            Element.row [ Font.center, centerX, centerY, spacing 20 ]
                 [ Element.el [ Font.center, centerX, centerY ] (text soundComponent.sound)
-                , Element.el [ Font.center, centerX, centerY, Font.size 20, alpha 0.3 ] (text (String.fromChar soundComponent.component))
+                , Element.el [ Font.center, Font.extraLight, centerX, centerY, alpha 0.3 ] (text (String.fromChar soundComponent.component))
                 ]
         , onPress = Just (DeselectSoundComponent soundComponent)
         }
@@ -532,14 +538,18 @@ viewSelectedSoundComponent soundComponent =
 
 viewKanaRow : KanaRow -> List SoundComponent -> List SoundComponent -> Element Msg
 viewKanaRow kanaRow selected soundComponents =
-    Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
-        [ viewTitle (printKanaRowInKana kanaRow)
-        , Element.wrappedRow
-            [ spacing 20
-            , width fill
+    if List.any (isSoundFromKanaRow kanaRow) soundComponents then
+        Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
+            [ viewTitle (printKanaRowInKana kanaRow)
+            , Element.wrappedRow
+                [ spacing 20
+                , width fill
+                ]
+                (List.map (viewSoundComponent selected) (List.filter (\soundComponent -> isSoundFromKanaRow kanaRow soundComponent) soundComponents))
             ]
-            (List.map (viewSoundComponent selected) (List.filter (\soundComponent -> isSoundFromKanaRow kanaRow soundComponent) soundComponents))
-        ]
+
+    else
+        Element.text ""
 
 
 allKanaRows : List KanaRow
