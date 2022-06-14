@@ -13860,7 +13860,9 @@ var $author$project$Phone$viewSelectedSoundComponent = function (soundComponent)
 					[
 						$mdgriffith$elm_ui$Element$Background$color($author$project$Theme$theme.contentBgColorLighter),
 						$mdgriffith$elm_ui$Element$Font$color($author$project$Theme$theme.fontColorLighter)
-					]))
+					])),
+				$mdgriffith$elm_ui$Element$centerX,
+				$mdgriffith$elm_ui$Element$centerY
 			]),
 		{
 			label: A2(
@@ -13914,7 +13916,9 @@ var $author$project$Phone$viewUnselectedSoundComponent = function (soundComponen
 					[
 						$mdgriffith$elm_ui$Element$Background$color($author$project$Theme$theme.contentBgColorLighter),
 						$mdgriffith$elm_ui$Element$Font$color($author$project$Theme$theme.fontColorLighter)
-					]))
+					])),
+				$mdgriffith$elm_ui$Element$centerX,
+				$mdgriffith$elm_ui$Element$centerY
 			]),
 		{
 			label: A2(
@@ -13951,11 +13955,13 @@ var $author$project$Phone$viewSoundComponent = F2(
 var $author$project$Phone$viewSoundComponents = F2(
 	function (selected, soundComponents) {
 		return A2(
-			$mdgriffith$elm_ui$Element$wrappedRow,
+			$mdgriffith$elm_ui$Element$column,
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$spacing(20),
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					$mdgriffith$elm_ui$Element$centerX,
+					$mdgriffith$elm_ui$Element$centerY
 				]),
 			A2(
 				$elm$core$List$map,
@@ -13983,9 +13989,9 @@ var $author$project$Phone$viewTitle = function (title) {
 		_List_fromArray(
 			[
 				$mdgriffith$elm_ui$Element$Font$extraLight,
-				$mdgriffith$elm_ui$Element$Font$size(50),
+				$mdgriffith$elm_ui$Element$Font$size(40),
 				$mdgriffith$elm_ui$Element$paddingEach(
-				{bottom: 20, left: 10, right: 0, top: 20})
+				{bottom: 20, left: 5, right: 0, top: 20})
 			]),
 		$mdgriffith$elm_ui$Element$text(title));
 };
@@ -13999,18 +14005,23 @@ var $author$project$Phone$viewKanaRow = F3(
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$paddingEach(
-					{bottom: 20, left: 0, right: 0, top: 10})
+					{bottom: 20, left: 0, right: 0, top: 10}),
+					$mdgriffith$elm_ui$Element$centerX,
+					$mdgriffith$elm_ui$Element$centerY,
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
 				]),
 			_List_fromArray(
 				[
 					$author$project$Phone$viewTitle(
 					$author$project$Kana$printKanaRowInKana(kanaRow)),
 					A2(
-					$mdgriffith$elm_ui$Element$wrappedRow,
+					$mdgriffith$elm_ui$Element$column,
 					_List_fromArray(
 						[
 							$mdgriffith$elm_ui$Element$spacing(20),
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+							$mdgriffith$elm_ui$Element$centerX,
+							$mdgriffith$elm_ui$Element$centerY
 						]),
 					A2(
 						$elm$core$List$map,
@@ -14030,7 +14041,9 @@ var $author$project$Phone$viewSoundComponentsByKana = F2(
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$spacing(20),
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					$mdgriffith$elm_ui$Element$centerX,
+					$mdgriffith$elm_ui$Element$centerY
 				]),
 			A2(
 				$elm$core$List$map,
@@ -14067,7 +14080,9 @@ var $author$project$Phone$view = function (model) {
 						$mdgriffith$elm_ui$Element$Font$size($author$project$Theme$theme.textSize),
 						$mdgriffith$elm_ui$Element$Font$regular,
 						$mdgriffith$elm_ui$Element$Font$justify,
-						$mdgriffith$elm_ui$Element$Background$color($author$project$Theme$theme.bgColor)
+						$mdgriffith$elm_ui$Element$Background$color($author$project$Theme$theme.bgColor),
+						$mdgriffith$elm_ui$Element$centerX,
+						$mdgriffith$elm_ui$Element$centerY
 					]),
 				A2(
 					$mdgriffith$elm_ui$Element$column,

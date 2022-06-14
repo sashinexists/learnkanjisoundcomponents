@@ -36,6 +36,8 @@ view model =
             , Font.regular
             , Font.justify
             , Background.color theme.bgColor
+            , centerX
+            , centerY
             ]
             (Element.column [ paddingEach { top = 10, bottom = 10, left = 10, right = 10 }, width fill, centerX, centerY ]
                 [ viewHeader model.display
@@ -209,7 +211,7 @@ viewSiteTitle =
 
 viewTitle : String -> Element Msg
 viewTitle title =
-    Element.el [ Font.extraLight, Font.size 50, paddingEach { top = 20, bottom = 20, right = 0, left = 10 } ] (Element.text title)
+    Element.el [ Font.extraLight, Font.size 40, paddingEach { top = 20, bottom = 20, right = 0, left = 5 } ] (Element.text title)
 
 
 viewSoundComponents : List SoundComponent -> List SoundComponent -> Element Msg
@@ -228,6 +230,8 @@ viewSoundComponentsByKana selected soundComponents =
     Element.column
         [ spacing 20
         , width fill
+        , centerX
+        , centerY
         ]
         (List.map (\kanaRow -> viewKanaRow kanaRow selected soundComponents) allKanaRows)
 
@@ -251,6 +255,8 @@ viewUnselectedSoundComponent soundComponent =
         , Font.size 50
         , Font.center
         , mouseOver [ Background.color theme.contentBgColorLighter, Font.color theme.fontColorLighter ]
+        , centerX
+        , centerY
         ]
         { label =
             Element.column [ Font.center, centerX, centerY, spacing 20 ]
@@ -270,6 +276,8 @@ viewSelectedSoundComponent soundComponent =
         , Font.size 50
         , Font.center
         , mouseOver [ Background.color theme.contentBgColorLighter, Font.color theme.fontColorLighter ]
+        , centerX
+        , centerY
         ]
         { label =
             Element.row [ Font.center, centerX, centerY, spacing 20 ]
@@ -283,7 +291,7 @@ viewSelectedSoundComponent soundComponent =
 viewKanaRow : KanaRow -> List SoundComponent -> List SoundComponent -> Element Msg
 viewKanaRow kanaRow selected soundComponents =
     if List.any (isSoundFromKanaRow kanaRow) soundComponents then
-        Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
+        Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 }, centerX, centerY, width fill ]
             [ viewTitle (printKanaRowInKana kanaRow)
             , Element.column
                 [ spacing 20
@@ -321,18 +329,6 @@ isSoundFromKanaRow kanaRow soundComponent =
             String.split "" (printKanaRowInKana kanaRow)
     in
     List.any (\letter -> String.startsWith letter soundComponent.sound) startsWith
-
-
-viewPopup : SoundComponent -> Element Msg
-viewPopup soundComponent =
-    Element.column
-        [ width fill
-        , height fill
-        , alpha 0.95
-        , Background.color theme.bgColor
-        , Element.inFront (viewSelectedSoundComponent soundComponent)
-        ]
-        []
 
 
 viewSoundComponentAttribute : String -> String -> Element Msg
