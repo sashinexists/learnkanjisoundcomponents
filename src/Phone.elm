@@ -214,9 +214,11 @@ viewTitle title =
 
 viewSoundComponents : List SoundComponent -> List SoundComponent -> Element Msg
 viewSoundComponents selected soundComponents =
-    Element.wrappedRow
+    Element.column
         [ spacing 20
         , width fill
+        , centerX
+        , centerY
         ]
         (List.map (viewSoundComponent selected) soundComponents)
 
@@ -283,9 +285,11 @@ viewKanaRow kanaRow selected soundComponents =
     if List.any (isSoundFromKanaRow kanaRow) soundComponents then
         Element.column [ paddingEach { top = 10, bottom = 20, left = 0, right = 0 } ]
             [ viewTitle (printKanaRowInKana kanaRow)
-            , Element.wrappedRow
+            , Element.column
                 [ spacing 20
                 , width fill
+                , centerX
+                , centerY
                 ]
                 (List.map (viewSoundComponent selected) (List.filter (\soundComponent -> isSoundFromKanaRow kanaRow soundComponent) soundComponents))
             ]
